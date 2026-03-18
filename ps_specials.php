@@ -169,7 +169,7 @@ class Ps_Specials extends Module implements WidgetInterface
         $helper->show_toolbar = false;
         $helper->table = $this->table;
         $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ?: 0;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitSpecials';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
