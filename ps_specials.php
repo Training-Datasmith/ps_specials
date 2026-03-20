@@ -61,6 +61,12 @@ class Ps_Specials extends Module implements WidgetInterface
         $this->templateFile = 'module:ps_specials/views/templates/hook/ps_specials.tpl';
     }
 
+    /**
+     * Installs the module, sets the default number of special-offer products to display,
+     * and registers cache-invalidation and display hooks.
+     *
+     * @return bool True on success, false on failure
+     */
     public function install()
     {
         $this->_clearCache('*');
@@ -77,6 +83,11 @@ class Ps_Specials extends Module implements WidgetInterface
             && $this->registerHook('displayHome');
     }
 
+    /**
+     * Uninstalls the module and clears all cached templates.
+     *
+     * @return bool True on success, false on failure
+     */
     public function uninstall()
     {
         $this->_clearCache('*');
@@ -84,41 +95,97 @@ class Ps_Specials extends Module implements WidgetInterface
         return parent::uninstall();
     }
 
+    /**
+     * Clears the template cache when a product is added.
+     *
+     * @param array $params Hook parameters including the affected product
+     *
+     * @return void
+     */
     public function hookActionProductAdd($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the template cache when a product is updated.
+     *
+     * @param array $params Hook parameters including the affected product
+     *
+     * @return void
+     */
     public function hookActionProductUpdate($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the template cache when a product is deleted.
+     *
+     * @param array $params Hook parameters including the affected product
+     *
+     * @return void
+     */
     public function hookActionProductDelete($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the template cache when a specific price rule is deleted.
+     *
+     * @param array $params Hook parameters including the deleted specific price object
+     *
+     * @return void
+     */
     public function hookActionObjectSpecificPriceDeleteAfter($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the template cache when a specific price rule is added.
+     *
+     * @param array $params Hook parameters including the new specific price object
+     *
+     * @return void
+     */
     public function hookActionObjectSpecificPriceAddAfter($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the template cache when a specific price rule is updated.
+     *
+     * @param array $params Hook parameters including the updated specific price object
+     *
+     * @return void
+     */
     public function hookActionObjectSpecificPriceUpdateAfter($params)
     {
         $this->_clearCache('*');
     }
 
+    /**
+     * Clears the Smarty template cache for this module's template file.
+     *
+     * @param string      $template   Template name (ignored; always clears the module template)
+     * @param string|null $cache_id   Optional cache ID
+     * @param string|null $compile_id Optional compile ID
+     *
+     * @return bool
+     */
     public function _clearCache($template, $cache_id = null, $compile_id = null)
     {
         return parent::_clearCache($this->templateFile);
     }
 
+    /**
+     * Renders the module configuration form and handles the save form submission.
+     *
+     * @return string HTML of the configuration page
+     */
     public function getContent()
     {
         $output = '';
@@ -188,6 +255,11 @@ class Ps_Specials extends Module implements WidgetInterface
         return $helper->generateForm([$fields_form]);
     }
 
+    /**
+     * Returns current configuration values for the module settings form.
+     *
+     * @return array{BLOCKSPECIALS_SPECIALS_NBR: int|string}
+     */
     public function getConfigFieldsValues()
     {
         return [
@@ -195,6 +267,14 @@ class Ps_Specials extends Module implements WidgetInterface
         ];
     }
 
+    /**
+     * Renders the specials/price-drop products widget, using cached output when available.
+     *
+     * @param string|null $hookName    Name of the hook rendering this widget
+     * @param array       $configuration Hook configuration parameters
+     *
+     * @return string|false Rendered HTML of the specials block, or false if no products on sale
+     */
     public function renderWidget($hookName = null, array $configuration = [])
     {
         if (!$this->isCached($this->templateFile, $this->getCacheId('ps_specials'))) {
@@ -210,6 +290,14 @@ class Ps_Specials extends Module implements WidgetInterface
         return $this->fetch($this->templateFile, $this->getCacheId('ps_specials'));
     }
 
+    /**
+     * Returns template variables for the specials widget.
+     *
+     * @param string|null $hookName    Name of the hook rendering this widget
+     * @param array       $configuration Hook configuration parameters
+     *
+     * @return array{products: array, allSpecialProductsLink: string}|false Variable map, or false if no products on sale
+     */
     public function getWidgetVariables($hookName = null, array $configuration = [])
     {
         $products = $this->getSpecialProducts();
