@@ -105,6 +105,9 @@ class ConfigurationFormTest extends PsSpecialsTestCase
         $module = $this->newModule();
         Context::getContext()->language->id = 7;
         $module->getContent();
+        $adminLinkCalls = Context::getContext()->link->adminLinkCalls;
+        $this->assertCount(1, $adminLinkCalls);
+        $this->assertSame(array('AdminModules', false), $adminLinkCalls[0]);
         $capture = TestState::$helperFormCapture;
         $this->assertFalse($capture['show_toolbar']);
         $this->assertSame('module', $capture['table']);

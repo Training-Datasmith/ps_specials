@@ -20,6 +20,7 @@ class WidgetTest extends PsSpecialsTestCase
         $this->assertSame(9, $vars['products'][1]->id_product);
         $this->assertSame(TestState::$pageLinkReturn, $vars['allSpecialProductsLink']);
         $ctx = Context::getContext();
+        $this->assertSame(array('prices-drop'), $ctx->link->pageLinkCalls);
         $this->assertSame($ctx->link, TestState::$imageRetrieverLinks[0]);
         $deps = TestState::$presenterConstructDeps[0];
         $this->assertSame($ctx->link, $deps['link']);
