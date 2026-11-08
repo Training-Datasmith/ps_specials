@@ -48,11 +48,9 @@ function upgrade_module_1_0_4($module)
         }
     }
 
-    $module->registerHook([
+    return (bool) $module->registerHook(array(
         'actionObjectSpecificPriceAddAfter',
         'actionObjectSpecificPriceUpdateAfter',
         'actionObjectSpecificPriceDeleteAfter',
-    ]);
-
-    return true;
+    ));
 }
