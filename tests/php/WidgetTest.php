@@ -6,8 +6,21 @@ class WidgetTest extends PsSpecialsTestCase
     {
         $module = $this->newModule();
         $vars = $module->getWidgetVariables('displayHome', array());
-        $this->assertCount(1, TestState::$assembleProductsLog);
+        $this->assertSame(
+            array(
+                array(array('id_product' => 4), array('id_product' => 9)),
+            ),
+            TestState::$assembleProductsLog
+        );
         $this->assertCount(2, TestState::$presentCalls);
+        $this->assertSame(
+            array('id_product' => 4, 'assembled_by' => 'bulk'),
+            TestState::$presentCalls[0]['product']
+        );
+        $this->assertSame(
+            array('id_product' => 9, 'assembled_by' => 'bulk'),
+            TestState::$presentCalls[1]['product']
+        );
         $this->assertInstanceOf(
             'PrestaShop\\PrestaShop\\Adapter\\Presenter\\Product\\ProductListingLazyArray',
             $vars['products'][0]

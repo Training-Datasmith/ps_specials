@@ -14,19 +14,19 @@ class CacheIdAndClearTest extends PsSpecialsTestCase
     /**
      * @dataProvider customerIdProvider
      */
-    public function testCustomerIdIsAppendedAsIntegerSegment($customerId, $pattern)
+    public function testCustomerIdIsAppendedAsIntegerSegment($customerId, $expected)
     {
         $module = $this->newModule();
         Context::getContext()->customer->id = $customerId;
         $cacheId = $module->exposeGetCacheId('ps_specials');
-        $this->assertRegExp($pattern, $cacheId);
+        $this->assertSame($expected, $cacheId);
     }
 
     public function customerIdProvider()
     {
         return array(
-            array('15', '/^ps_specials\\|15(?:\\||$)/'),
-            array('15abc', '/^ps_specials\\|15(?:\\||$)/'),
+            array('15', 'ps_specials|1|15'),
+            array('15abc', 'ps_specials|1|15'),
         );
     }
 
@@ -38,7 +38,7 @@ class CacheIdAndClearTest extends PsSpecialsTestCase
         $module = $this->newModule();
         Context::getContext()->customer->id = $customerId;
         $cacheId = $module->exposeGetCacheId('ps_specials');
-        $this->assertStringStartsWith('ps_specials', $cacheId);
+        $this->assertSame('ps_specials|1', $cacheId);
         $this->assertNotRegExp('/^ps_specials\\|0(?:\\||$)/', $cacheId);
     }
 

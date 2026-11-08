@@ -426,6 +426,9 @@ abstract class Module
             return false;
         }
         $this->id = 42;
+        if (TestState::$parentInstallLateFailure) {
+            return false;
+        }
 
         return true;
     }
@@ -458,7 +461,12 @@ abstract class Module
 
     protected function getCacheId($name = null)
     {
-        return $name !== null ? $name : $this->name;
+        $cacheId = $name !== null ? $name : $this->name;
+        if (isset($this->context->country)) {
+            $cacheId .= '|' . (int) $this->context->country->id;
+        }
+
+        return $cacheId;
     }
 
     public function isCached($template, $cache_id = null, $compile_id = null)

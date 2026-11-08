@@ -117,6 +117,7 @@ class ConfigurationFormTest extends PsSpecialsTestCase
         $expectedIndex = TestState::$adminLinkReturn
             . '&configure=ps_specials&tab_module=front_office_features&module_name=ps_specials';
         $this->assertSame($expectedIndex, $capture['currentIndex']);
+        $this->assertSame(array('AdminModules'), TestState::$getAdminTokenLiteTabs);
         $this->assertSame(TestState::$adminTokenReturn, $capture['token']);
         $this->assertSame(7, $capture['tpl_vars']['id_language']);
         $this->assertSame(Context::getContext()->controller->getLanguages(), $capture['tpl_vars']['languages']);

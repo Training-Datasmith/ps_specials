@@ -17,8 +17,10 @@ SIGNING_FPR="D8406D0D82947747293778314AA394086372C20A"
 
 EXPORT="$(mktemp -d)"
 WORK="$(mktemp -d)"
-chmod 0700 "$EXPORT" "$WORK"
-trap 'rm -rf "$EXPORT" "$WORK"' EXIT
+GNUPGHOME="$(mktemp -d)"
+chmod 0700 "$EXPORT" "$WORK" "$GNUPGHOME"
+export GNUPGHOME
+trap 'rm -rf "$EXPORT" "$WORK" "$GNUPGHOME"' EXIT
 
 if ! command -v "$DOCKER" >/dev/null 2>&1; then
   echo "Docker not found in PATH (set DOCKER if needed)" >&2
@@ -132,10 +134,6 @@ for phpfile in "$EXPORT/ps_specials.php" "$EXPORT/upgrade/upgrade-1.0.4.php"; do
   fi
 done
 
-GNUPGHOME="$(mktemp -d)"
-chmod 0700 "$GNUPGHOME"
-export GNUPGHOME
-
 curl -fsSL -o "$WORK/phpunit-${PHPUNIT_VERSION}.phar" "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar"
 curl -fsSL -o "$WORK/phpunit-${PHPUNIT_VERSION}.phar.asc" "https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar.asc"
 curl -fsSL -o "$WORK/gpg.asc" "https://sebastian-bergmann.de/gpg.asc"
@@ -192,7 +190,7 @@ if grep -qE '^OK \(' "$OUTPUT"; then
   exit 1
 fi
 
-if grep -qE '^There was [0-9]+ error' "$OUTPUT"; then
+if grep -qE '^There (was|were) [0-9]+ errors?:' "$OUTPUT"; then
   echo "Proof failed: PHPUnit reported errors" >&2
   exit 1
 fi
@@ -204,8 +202,8 @@ for prefix in "Parse error:" "Fatal error:" "Catchable fatal error:" "Recoverabl
   fi
 done
 
-if ! grep -q '^FAILURES!' "$OUTPUT"; then
-  echo "Proof failed: expected FAILURES! summary" >&2
+if ! grep -qE '^Tests: [0-9]+, Assertions: [0-9]+, Failures: [1-9][0-9]*\.$' "$OUTPUT"; then
+  echo "Proof failed: expected failure summary with non-zero Failures count" >&2
   exit 1
 fi
 

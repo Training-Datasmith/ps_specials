@@ -13,6 +13,7 @@ class TestState
     public static $registerHookResult = true;
     public static $registerHookFailOn = null;
     public static $parentInstallResult = true;
+    public static $parentInstallLateFailure = false;
     public static $parentUninstallResult = true;
     public static $parentClearCacheCalls = array();
     public static $parentClearCacheReturn = 0;
@@ -50,6 +51,7 @@ class TestState
         self::$registerHookResult = true;
         self::$registerHookFailOn = null;
         self::$parentInstallResult = true;
+        self::$parentInstallLateFailure = false;
         self::$parentUninstallResult = true;
         self::$parentClearCacheCalls = array();
         self::$parentClearCacheReturn = 7;

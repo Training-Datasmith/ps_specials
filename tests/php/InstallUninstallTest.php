@@ -26,7 +26,7 @@ class InstallUninstallTest extends PsSpecialsTestCase
 
     public function testParentInstallFailureSkipsHookRegistration()
     {
-        TestState::$parentInstallResult = false;
+        TestState::$parentInstallLateFailure = true;
         $module = $this->newModule();
         $this->assertFalse($module->install());
         $this->assertSame(array(), TestState::$registeredHooks);

@@ -46,6 +46,7 @@ class ConstructorTest extends PsSpecialsTestCase
     {
         $module = $this->newModule();
         $ctx = Context::getContext();
+        $this->assertInstanceOf('FakeSmartyData', $module->getModuleSmartyData());
         $this->assertNotSame($ctx->smarty, $module->getModuleSmartyData());
         $this->assertSame($ctx->smarty->moduleData, $module->getModuleSmartyData());
     }
